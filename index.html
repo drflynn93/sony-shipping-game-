@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Sony Pacific Logistics — Strategic Marketing Management</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  :root {
+    --bg-primary: #ffffff;
+    --bg-secondary: #f4f4f2;
+    --bg-tertiary: #ebebea;
+    --text-primary: #1a1a1a;
+    --text-secondary: #6b6b68;
+    --border-light: rgba(0,0,0,0.1);
+    --border-medium: rgba(0,0,0,0.18);
+    --radius-md: 8px;
+    --radius-lg: 12px;
+    --green: #1D9E75;
+    --green-bg: #EAF3DE;
+    --green-border: #97C459;
+    --green-text: #27500A;
+    --amber: #BA7517;
+    --red: #A32D2D;
+    --red-bg: #FCEBEB;
+    --red-border: #F09595;
+    --red-text: #501313;
+    --blue-bg: #E6F1FB;
+    --blue-border: #85B7EB;
+    --blue-text: #0C447C;
+    --blue-accent: #378ADD;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --bg-primary: #1e1e1c;
+      --bg-secondary: #2a2a28;
+      --bg-tertiary: #333330;
+      --text-primary: #f0efe8;
+      --text-secondary: #9a9990;
+      --border-light: rgba(255,255,255,0.1);
+      --border-medium: rgba(255,255,255,0.18);
+      --green: #5DCAA5;
+      --green-bg: #085041;
+      --green-border: #1D9E75;
+      --green-text: #9FE1CB;
+      --amber: #EF9F27;
+      --red: #F09595;
+      --red-bg: #501313;
+      --red-border: #A32D2D;
+      --red-text: #F7C1C1;
+      --blue-bg: #042C53;
+      --blue-border: #185FA5;
+      --blue-text: #B5D4F4;
+      --blue-accent: #85B7EB;
+    }
+  }
+  body {
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+    background: var(--bg-tertiary);
+    color: var(--text-primary);
+    min-height: 100vh;
+    padding: 2rem 1rem;
+  }
+  .shell {
+    max-width: 740px;
+    margin: 0 auto;
+  }
+  .masthead {
+    margin-bottom: 1.5rem;
+    padding-bottom: 1rem;
+    border-bottom: 0.5px solid var(--border-light);
+  }
+  .masthead-kicker {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--text-secondary);
+    margin-bottom: 4px;
+  }
+  .masthead-title {
+    font-size: 22px;
+    font-weight: 500;
+    color: var(--text-primary);
+    margin-bottom: 2px;
+  }
+  .masthead-sub {
+    font-size: 13px;
+    color: var(--text-secondary);
+  }
+  #game { width: 100%; }
+
+  .hud {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0,1fr));
+    gap: 10px;
+    margin-bottom: 1.25rem;
+  }
+  .stat {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 0.75rem 1rem;
+  }
+  .stat-label { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.04em; margin-bottom: 4px; }
+  .stat-value { font-size: 20px; font-weight: 500; color: var(--text-primary); }
+  .stat-value.good { color: var(--green); }
+  .stat-value.warn { color: var(--amber); }
+  .stat-value.bad { color: var(--red); }
+
+  .route-bar {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin-bottom: 1.25rem;
+    flex-wrap: wrap;
+    font-size: 12px;
+  }
+  .route-node {
+    background: var(--bg-secondary);
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-md);
+    padding: 5px 10px;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-secondary);
+  }
+  .route-node.active { background: var(--blue-bg); border-color: var(--blue-accent); color: var(--blue-text); }
+  .route-node.done { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .route-arrow { color: var(--text-secondary); }
+
+  .event-card {
+    border: 0.5px solid var(--border-light);
+    border-radius: var(--radius-lg);
+    padding: 1.25rem;
+    margin-bottom: 1.25rem;
+    background: var(--bg-primary);
+  }
+  .event-header { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 0.75rem; }
+  .event-icon { font-size: 24px; line-height: 1; margin-top: 2px; }
+  .event-turn { font-size: 11px; color: var(--text-secondary); text-transform: uppercase; letter-spacing: 0.05em; margin-bottom: 3px; }
+  .event-title { font-size: 16px; font-weight: 500; color: var(--text-primary); }
+  .event-body { font-size: 14px; color: var(--text-secondary); line-height: 1.65; margin-bottom: 1.1rem; }
+  .event-body strong { color: var(--text-primary); font-weight: 500; }
+
+  .section-label { font-size: 11px; text-transform: uppercase; letter-spacing: 0.05em; color: var(--text-secondary); margin-bottom: 8px; }
+  .choices { display: flex; flex-direction: column; gap: 8px; }
+  .choice-btn {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 0.8rem 1rem;
+    text-align: left;
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text-primary);
+    font-family: inherit;
+    line-height: 1.5;
+    transition: background 0.1s;
+  }
+  .choice-btn:hover { background: var(--bg-secondary); }
+  .choice-btn .choice-label { font-weight: 500; margin-bottom: 2px; display: block; }
+  .choice-btn .choice-meta { font-size: 12px; color: var(--text-secondary); }
+
+  .outcome-card { border-radius: var(--radius-lg); padding: 1.25rem; margin-bottom: 1.25rem; border: 0.5px solid; }
+  .outcome-card.good { background: var(--green-bg); border-color: var(--green-border); color: var(--green-text); }
+  .outcome-card.bad { background: var(--red-bg); border-color: var(--red-border); color: var(--red-text); }
+  .outcome-card.neutral { background: var(--blue-bg); border-color: var(--blue-border); color: var(--blue-text); }
+  .outcome-title { font-size: 14px; font-weight: 500; margin-bottom: 5px; }
+  .outcome-body { font-size: 13px; line-height: 1.65; }
+  .outcome-body strong { font-weight: 500; }
+
+  .next-btn, .replay-btn {
+    background: var(--bg-primary);
+    border: 0.5px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    padding: 0.6rem 1.5rem;
+    cursor: pointer;
+    font-size: 13px;
+    font-family: inherit;
+    color: var(--text-primary);
+    transition: background 0.1s;
+  }
+  .next-btn:hover, .replay-btn:hover { background: var(--bg-secondary); }
+
+  .log { margin-bottom: 1.25rem; }
+  .log-entry { font-size: 12px; color: var(--text-secondary); padding: 4px 0; border-bottom: 0.5px solid var(--border-light); line-height: 1.5; }
+  .log-entry:last-child { border-bottom: none; }
+  .log-entry .t { font-weight: 500; color: var(--text-primary); margin-right: 6px; }
+
+  .endscreen { border: 0.5px solid var(--border-light); border-radius: var(--radius-lg); padding: 1.75rem; text-align: center; background: var(--bg-primary); }
+  .endscreen h2 { font-size: 20px; font-weight: 500; margin-bottom: 0.5rem; }
+  .endscreen > p { font-size: 14px; color: var(--text-secondary); margin-bottom: 1.25rem; line-height: 1.65; }
+  .grade { font-size: 52px; font-weight: 500; margin: 0.75rem 0; }
+  .grade.A { color: var(--green); }
+  .grade.B { color: #639922; }
+  .grade.C { color: var(--amber); }
+  .grade.D { color: var(--red); }
+  .grade-label { font-size: 15px; font-weight: 500; margin-bottom: 10px; color: var(--text-primary); }
+
+  .end-stats { display: grid; grid-template-columns: repeat(4, minmax(0,1fr)); gap: 10px; margin-bottom: 1.25rem; }
+  .debrief {
+    text-align: left;
+    background: var(--bg-secondary);
+    border-radius: var(--radius-md);
+    padding: 1rem;
+    margin-bottom: 1.25rem;
+    font-size: 13px;
+    line-height: 1.7;
+    color: var(--text-secondary);
+  }
+  .debrief strong { color: var(--text-primary); font-weight: 500; }
+
+  @media (max-width: 520px) {
+    .hud, .end-stats { grid-template-columns: repeat(2, minmax(0,1fr)); }
+    body { padding: 1rem 0.75rem; }
+  }
+</style>
+</head>
+<body>
+<div class="shell">
+  <div class="masthead">
+    <div class="masthead-kicker">Strategic Marketing Management — Supply Chain Module</div>
+    <div class="masthead-title">Sony Pacific Logistics</div>
+    <div class="masthead-sub">Manage a 2,400 TEU container shipment from Osaka to US retailers</div>
+  </div>
+  <div id="game"></div>
+</div>
+
+<script>
+const ROUTE = ["Osaka Port","Trans-Pacific","Los Angeles","Rail/Truck","US Retailer"];
+
+const TURNS = [
+  {
+    id:1, node:0, icon:"🏭",
+    title:"Shipment ready — choose your carrier",
+    body:"Sony's Q4 PlayStation shipment (2,400 TEUs) is ready at Osaka. You need to book a vessel. Three options are available this week.",
+    choices:[
+      {label:"Premium carrier — Evergreen Express", meta:"Cost: $3.2M | Transit: 14 days | Reliability: high", cost:-3200, days:14, risk:-1, score:10},
+      {label:"Budget carrier — Pacific Star", meta:"Cost: $2.1M | Transit: 18 days | Reliability: moderate", cost:-2100, days:18, risk:0, score:6},
+      {label:"Spot market charter", meta:"Cost: $2.6M | Transit: 16 days | Reliability: variable", cost:-2600, days:16, risk:1, score:7}
+    ]
+  },
+  {
+    id:2, node:1, icon:"🌊",
+    title:"Typhoon Kenji — route decision",
+    body:"A Category 2 typhoon is tracking across the North Pacific. Your vessel is 3 days out of Osaka. Two options to respond.",
+    choices:[
+      {label:"Reroute south — avoid the storm", meta:"Extra cost: $180K | +3 days delay | Cargo fully protected", cost:-180, days:3, risk:-2, score:12},
+      {label:"Push through — weather advisory only", meta:"No extra cost | On schedule | 35% chance of damage/delay", cost:0, days:0, risk:3, score:-5, event:"typhoon"}
+    ]
+  },
+  {
+    id:3, node:1, icon:"📡",
+    title:"Mid-ocean cargo shift alert",
+    body:"The bridge reports minor cargo shift in Bay 7. Standard procedure — secure and continue, or call for inspection at nearest port (Honolulu).",
+    choices:[
+      {label:"Divert to Honolulu for inspection", meta:"Cost: $95K | +2 days | Eliminates all damage risk", cost:-95, days:2, risk:-2, score:8},
+      {label:"Secure onboard — continue to LA", meta:"No cost | On schedule | Low but non-zero damage risk", cost:0, days:0, risk:1, score:2}
+    ]
+  },
+  {
+    id:4, node:2, icon:"🏗️",
+    title:"Port of LA — berth availability",
+    body:"You arrive at LA. Port congestion is moderate — two berth options available.",
+    choices:[
+      {label:"Standard berth — queue, 2-day wait", meta:"No surcharge | 2-day delay before unloading begins", cost:0, days:2, risk:0, score:3},
+      {label:"Priority berth — premium slot", meta:"Surcharge: $220K | Unload begins immediately", cost:-220, days:0, risk:0, score:8}
+    ]
+  },
+  {
+    id:5, node:2, icon:"📋",
+    title:"Customs documentation review",
+    body:"CBP has flagged 140 TEUs of accessories for additional documentation review due to new HTS code changes.",
+    choices:[
+      {label:"Customs broker — expedite clearance", meta:"Cost: $45K | Cleared in 24 hours", cost:-45, days:1, risk:-1, score:9},
+      {label:"Handle in-house — standard queue", meta:"No cost | 4–6 day clearance window", cost:0, days:5, risk:0, score:2}
+    ]
+  },
+  {
+    id:6, node:3, icon:"🚂",
+    title:"Intermodal handoff — rail or truck?",
+    body:"Cargo cleared customs. You need to move 2,400 TEUs to distribution centers in Dallas, Chicago, and Atlanta.",
+    choices:[
+      {label:"Rail — BNSF intermodal", meta:"Cost: $640K | 5–7 days to DCs | Environmentally efficient", cost:-640, days:6, risk:0, score:10},
+      {label:"Expedited trucking — full fleet", meta:"Cost: $1.1M | 2–3 days to DCs | Higher cost, faster", cost:-1100, days:2, risk:0, score:5},
+      {label:"Split — rail to Chicago, truck to Dallas/ATL", meta:"Cost: $820K | 4 days average | Balanced", cost:-820, days:4, risk:0, score:8}
+    ]
+  },
+  {
+    id:7, node:4, icon:"📦",
+    title:"Final mile — retailer delivery window",
+    body:"Sony's retail partners (Best Buy, Target, Walmart) have strict Black Friday receiving windows. Your shipment arrives just in time — but one DC is at capacity.",
+    choices:[
+      {label:"Hold at 3PL warehouse — deliver next window", meta:"Storage cost: $30K | No penalty | Reliable delivery", cost:-30, days:1, risk:0, score:7},
+      {label:"Push direct — negotiate extended receiving", meta:"No storage cost | Risk of penalty if refused", cost:0, days:0, risk:1, score:9, event:"retailer"}
+    ]
+  }
+];
+
+let state = {};
+
+function initState(){
+  state = { turn:0, budget:5000, days:0, risk:3, score:0, phase:"choose", log:[], lastOutcome:null };
+}
+
+function getRiskLabel(r){
+  if(r<=2) return ["good","Low"];
+  if(r<=4) return ["warn","Moderate"];
+  return ["bad","High"];
+}
+
+function getBudgetColor(b){
+  if(b>2000) return "good";
+  if(b>800) return "warn";
+  return "bad";
+}
+
+function render(){
+  const g = document.getElementById("game");
+  if(state.turn >= TURNS.length && state.phase==="done"){ g.innerHTML = renderEnd(); return; }
+  const t = TURNS[Math.min(state.turn, TURNS.length-1)];
+  const [rClass, rLabel] = getRiskLabel(state.risk);
+  g.innerHTML = `
+    <div class="hud">
+      <div class="stat"><div class="stat-label">Budget remaining</div><div class="stat-value ${getBudgetColor(state.budget)}">$${state.budget.toLocaleString()}K</div></div>
+      <div class="stat"><div class="stat-label">Days elapsed</div><div class="stat-value">${state.days}d</div></div>
+      <div class="stat"><div class="stat-label">Risk level</div><div class="stat-value ${rClass}">${rLabel}</div></div>
+      <div class="stat"><div class="stat-label">Score</div><div class="stat-value">${state.score}</div></div>
+    </div>
+    ${renderRoute(t.node)}
+    ${state.log.length ? renderLog() : ""}
+    ${state.phase==="outcome" ? renderOutcome() : renderEvent(t)}
+  `;
+}
+
+function renderRoute(activeNode){
+  return `<div class="route-bar">` +
+    ROUTE.map((n,i)=>{
+      let cls = i < activeNode ? "done" : i===activeNode ? "active" : "";
+      return `<span class="route-node ${cls}">${n}</span>${i<ROUTE.length-1?'<span class="route-arrow">→</span>':''}`;
+    }).join("") + `</div>`;
+}
+
+function renderLog(){
+  return `<div class="log">${state.log.slice(-3).map(l=>`<div class="log-entry"><span class="t">T${l.t}</span>${l.msg}</div>`).join("")}</div>`;
+}
+
+function renderEvent(t){
+  return `
+    <div class="event-card">
+      <div class="event-header">
+        <span class="event-icon">${t.icon}</span>
+        <div>
+          <div class="event-turn">Turn ${t.id} of ${TURNS.length}</div>
+          <div class="event-title">${t.title}</div>
+        </div>
+      </div>
+      <div class="event-body">${t.body}</div>
+      <div class="section-label">Choose your action</div>
+      <div class="choices">${t.choices.map((c,i)=>`
+        <button class="choice-btn" onclick="choose(${i})">
+          <span class="choice-label">${c.label}</span>
+          <span class="choice-meta">${c.meta}</span>
+        </button>`).join("")}
+      </div>
+    </div>`;
+}
+
+function renderOutcome(){
+  const o = state.lastOutcome;
+  return `
+    <div class="outcome-card ${o.type}">
+      <div class="outcome-title">${o.title}</div>
+      <div class="outcome-body">${o.body}</div>
+    </div>
+    <button class="next-btn" onclick="nextTurn()">${state.turn >= TURNS.length ? "See final results →" : "Next turn →"}</button>
+  `;
+}
+
+function choose(idx){
+  const t = TURNS[state.turn];
+  const c = t.choices[idx];
+  state.budget += c.cost;
+  state.days += c.days;
+  state.risk = Math.max(0, Math.min(8, state.risk + c.risk));
+  state.score += c.score;
+
+  let outcomeType="neutral", outcomeTitle="", outcomeBody="";
+
+  if(c.event==="typhoon"){
+    const hit = Math.random() < 0.45;
+    if(hit){
+      state.budget -= 420; state.days += 5; state.score -= 15; state.risk += 2;
+      outcomeType="bad"; outcomeTitle="Typhoon Kenji causes damage";
+      outcomeBody="The vessel sustained wave damage. 80 TEUs of electronics are compromised. Emergency repairs at sea: <strong>–$420K, +5 days</strong>. This is the risk of ignoring weather advisories.";
+    } else {
+      outcomeType="neutral"; outcomeTitle="Passed through safely — this time";
+      outcomeBody="You got lucky — the typhoon weakened slightly. No damage this run. But the same decision could cost you heavily in another scenario. Risk management is about probability, not just outcomes.";
+    }
+  } else if(c.event==="retailer"){
+    const pen = Math.random() < 0.4;
+    if(pen){
+      state.budget -= 150; state.score -= 8;
+      outcomeType="bad"; outcomeTitle="Retailer refused extended window";
+      outcomeBody="Best Buy's DC rejected the late delivery. Sony faces a <strong>–$150K chargeback penalty</strong> and strained retailer relationship. Retailers have strict compliance windows — their shelf timing is planned months ahead.";
+    } else {
+      outcomeType="good"; outcomeTitle="Retailer accepted the shipment";
+      outcomeBody="Target's receiving manager accommodated the delivery. No penalty this time. Good outcome, but relationship capital was spent. Not a repeatable strategy for every quarter.";
+    }
+  } else {
+    outcomeType = c.score >= 8 ? "good" : c.score < 0 ? "bad" : "neutral";
+    if(c.cost < -500){
+      outcomeTitle="Higher cost, lower risk";
+      outcomeBody=`You spent <strong>$${Math.abs(c.cost).toLocaleString()}K</strong> more, but reduced schedule risk${c.days>0?` at the cost of ${c.days} additional days`:''}. In supply chain, reliability often costs money upfront — the question is whether the downside risk justifies the savings.`;
+    } else if(c.cost===0 && c.days>0){
+      outcomeTitle=`+${c.days} day delay accepted`;
+      outcomeBody=`No extra cost, but <strong>${c.days} days added</strong> to your timeline. Every delay compounds — retailers expect on-time delivery and late arrivals can trigger chargebacks or lost shelf placement.`;
+    } else if(c.cost<0 && c.days===0){
+      outcomeTitle="Fast and cost-effective";
+      outcomeBody=`Spent <strong>$${Math.abs(c.cost).toLocaleString()}K</strong> to stay on schedule. Time-sensitive consumer electronics often justify premium spend — PlayStation units sitting in a warehouse are units not generating revenue.`;
+    } else {
+      outcomeTitle="Decision logged";
+      outcomeBody=`Cost impact: <strong>${c.cost<0?'–$'+Math.abs(c.cost).toLocaleString()+'K':'none'}</strong> | Schedule impact: <strong>${c.days>0?'+'+c.days+' days':'on schedule'}</strong>. Each tradeoff shapes your final delivery outcome.`;
+    }
+  }
+
+  state.log.push({t: t.id, msg: `${t.title.split("—")[0].trim()} → ${c.label.split("—")[0].trim()}`});
+  state.turn++;
+  state.lastOutcome = {type: outcomeType, title: outcomeTitle, body: outcomeBody};
+  state.phase = "outcome";
+  render();
+}
+
+function nextTurn(){
+  state.phase = state.turn >= TURNS.length ? "done" : "choose";
+  render();
+}
+
+function renderEnd(){
+  const s = state.score;
+  let grade, gradeLabel, summary;
+  if(s>=65){ grade="A"; gradeLabel="Excellent logistics manager"; summary="Your shipment arrived on time, within budget, and with minimal disruptions. Sony's retail partners are stocked for Black Friday."; }
+  else if(s>=48){ grade="B"; gradeLabel="Solid performance"; summary="A few costly decisions, but the shipment delivered. Some cost overruns or minor delays — recoverable, but room to improve."; }
+  else if(s>=30){ grade="C"; gradeLabel="Needs improvement"; summary="Budget overruns and delays created real problems. Retailers may have faced stockouts and Sony's margin took a hit."; }
+  else { grade="D"; gradeLabel="Supply chain failure"; summary="Multiple disruptions compounded. Significant cargo damage, chargeback penalties, or missed delivery windows — Sony's Q4 was impacted."; }
+
+  const [rClass, rLabel] = getRiskLabel(state.risk);
+  return `
+    <div class="endscreen">
+      <div class="stat-label" style="margin-bottom:4px">Shipment complete — Osaka to US retailers</div>
+      <h2>Final debrief</h2>
+      <div class="grade ${grade}">${grade}</div>
+      <div class="grade-label">${gradeLabel}</div>
+      <p>${summary}</p>
+      <div class="end-stats">
+        <div class="stat"><div class="stat-label">Budget left</div><div class="stat-value ${getBudgetColor(state.budget)}">$${state.budget.toLocaleString()}K</div></div>
+        <div class="stat"><div class="stat-label">Total days</div><div class="stat-value">${state.days}d</div></div>
+        <div class="stat"><div class="stat-label">Final risk</div><div class="stat-value ${rClass}">${rLabel}</div></div>
+        <div class="stat"><div class="stat-label">Score</div><div class="stat-value">${state.score}</div></div>
+      </div>
+      <div class="debrief">
+        <strong>Key concepts encountered:</strong><br><br>
+        <strong>Cost vs. speed tradeoffs</strong> — every dollar saved on freight has a schedule and risk cost.<br>
+        <strong>Disruption response</strong> — typhoons, customs delays, and port congestion are routine in global logistics, not exceptions.<br>
+        <strong>Intermodal coordination</strong> — the "last mile" from port to DC is often where margin is won or lost.<br>
+        <strong>Retailer compliance windows</strong> — retailers have zero tolerance for late deliveries during peak season.
+      </div>
+      <button class="replay-btn" onclick="restartGame()">Play again</button>
+    </div>`;
+}
+
+function restartGame(){ initState(); render(); }
+
+initState();
+render();
+</script>
+</body>
+</html>
